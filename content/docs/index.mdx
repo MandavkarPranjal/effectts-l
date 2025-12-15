@@ -1,13 +1,26 @@
 ---
-title: Introduction
-description: Your first document
+title: Hello World with Effectts
+description: Every programmers first line of code. Let's f*cking write it with Effectts!
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+before I start learning [Effect](https://effect.website), I was told that effect is not a framework, it is a language *(yeah it is)*.
 
-## What is Next?
+### Core mental model (before coding)
+- Effect programs are **Describing program**, not executing them immediately
+- **Explicit effects** instead of hidden side effects
+- **Type error channel**
+- **Dependency injection via Context**
+---
+Here is a basic program that prints "Hello, world!"
 
-<Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
-</Cards>
+```ts tab="ts"
+console.log("Hello, world!")
+```
+
+```ts tab="effect"
+import { Effect, Console } from "effect"; // [!code highlight]
+
+const program = Console.log("Hello, world!")
+
+Effect.runSync(program);
+````
