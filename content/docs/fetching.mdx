@@ -35,7 +35,87 @@ fetchData()
 I know that, way I'm writing this code is not correct way, but I'm just learning Effect with mistakes so please bear with me :)
 
 ---
-### Opencode Chat
+
+## Error Handling
+```ts tab="effect"
+import { Console, Effect } from "effect";
+
+const fetchData = Effect.gen(function*() {
+    // Using tryPromise with error handling, instead of bare throw
+    const response = yield* Effect.tryPromise({
+        try: () => fetch("https://jsonplaceholder.typicode.com/todos/1"),
+        catch: (error) => new Error(`Failed fetch: ${error}`)
+    })
+
+    // Checking HTTP response status
+    if (!response.ok) {
+        return yield* Effect.fail(
+            new Error(`HTTP ${response.status}: ${response.statusText}`)
+        );
+    }
+
+    // now parse response as JSON
+    const data = yield* Effect.tryPromise({
+        try: () => response.json(),
+        catch: (error) => new Error(`Failed to parse JSON: ${error}`)
+    })
+
+    yield* Console.log(data);
+    return data;
+})
+
+await Effect.runPromise(fetchData);
+```
+
+There are two ways to handle errors with `tryPromise`:
+
+1. If you don't provide a `catch` function, the error is caught and the
+   effect fails with an `UnknownException`.
+2. If you provide a `catch` function, the error is caught and the `catch`
+   function maps it to an error of type `E`.
+
+<Callout>LLMs said to me that while using Effect you shouldn't use `try/catch` but instead use `Effect.tryPromise` and `Effect.fail` to handle errors explicitly</Callout>
+
+---
+## Type-safety
+```ts tab="effect"
+import { Console, Effect } from "effect";
+
+interface Todo {
+    userId: number;
+    id: number;
+    title: string;
+    completed: boolean;
+}
+
+const fetchData = Effect.gen(function*() {
+    // Using tryPromise with error handling, instead of bare throw
+    const response = yield* Effect.tryPromise({
+        try: () => fetch("https://jsonplaceholder.typicode.com/todos/1"),
+        catch: (error) => new Error(`Failed fetch: ${error}`)
+    })
+
+    // Checking HTTP response status
+    if (!response.ok) {
+        return yield* Effect.fail(
+            new Error(`HTTP ${response.status}: ${response.statusText}`)
+        );
+    }
+
+    // now parse response as JSON
+    const data: Todo = yield* Effect.tryPromise({
+        try: () => response.json(),
+        catch: (error) => new Error(`Failed to parse JSON: ${error}`)
+    })
+
+    yield* Console.log(data);
+    return data;
+})
+
+await Effect.runPromise(fetchData);
+```
+---
+## Opencode Chat
 <Cards>
     <Card
     title="What is Effect.gen, yield*?"
