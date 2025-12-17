@@ -1,0 +1,12 @@
+{
+  "title": "Display Name",
+  "icon": "MyIcon",
+  "defaultOpen": true,
+  "pages": [
+      "---Introduction---",
+      "index",
+      "fetching",
+      "---Tutorials---",
+      "beginner"
+  ]
+}
